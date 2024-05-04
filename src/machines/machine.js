@@ -1,4 +1,4 @@
-import { assign, setup } from "xstate";
+import { assign, emit, setup } from "xstate";
 
 export const machine = setup({}).createMachine({
   initial: "idle",
@@ -35,7 +35,9 @@ export const machine = setup({}).createMachine({
           target: "form",
         },
         submit: {
+          guard: ({ context }) => context.message.trim().length > 0,
           target: "thanks",
+          actions: emit({ type: "notify", message: "done" }),
         },
         "change value": {
           actions: assign({

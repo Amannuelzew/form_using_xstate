@@ -20,7 +20,11 @@ const countActor = createActor(countLogic);
 export default function App() {
   const coutRef = useActorRef(countLogic);
   const count = useSelector(coutRef, (state) => state.context.count);
-  const [state, send] = useMachine(machine);
+  const [state, send, actor] = useMachine(machine);
+  /* //emit example
+  actor.on("notify", (event) => {
+    alert(event.message);
+  }); */
   const handleOpen = () => {
     send({ type: "open" });
   };
@@ -74,7 +78,8 @@ export default function App() {
             ></textarea>
             <br />
             <button
-              disabled={state.context.message.trim() == ""}
+              //disabled={state.context.message.trim() == ""}
+              disabled={!state.can({ type: "submit" })}
               onClick={handleSubmit}
             >
               Submit
