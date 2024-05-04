@@ -8,7 +8,10 @@ import { machine } from "./machines/machine";
 //can have thier own state
 const countLogic = fromTransition(
   (state, event) => {
+    if (event.type == "reset") return { count: 0 };
     if (event.type == "inc") return { count: state.count + 1 };
+    if (event.type == "dec") return { count: state.count - 1 };
+    if (event.type == "incby") return { count: state.count + event.value };
     return state;
   },
   { count: 0 },
@@ -84,7 +87,12 @@ export default function App() {
         <button onClick={handleOpen}>open feedback</button>
       )}
       <h4>{count}</h4>
-      <button onClick={() => coutRef.send({ type: "inc" })}>count</button>
+      <button onClick={() => coutRef.send({ type: "reset" })}>reset</button>
+      <button onClick={() => coutRef.send({ type: "inc" })}>inc</button>
+      <button onClick={() => coutRef.send({ type: "dec" })}>dec</button>
+      <button onClick={() => coutRef.send({ type: "incby", value: 5 })}>
+        by
+      </button>
     </div>
   );
 }
