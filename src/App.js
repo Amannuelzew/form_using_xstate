@@ -2,8 +2,21 @@ import { createActor, fromTransition } from "xstate";
 import "./styles.css";
 import { useActor, useActorRef, useMachine, useSelector } from "@xstate/react";
 import { machine } from "./machines/machine";
-
+//actors can send a message
+//recevie a message
+//spawn a child
+//can have thier own state
+const countLogic = fromTransition(
+  (state, event) => {
+    if (event.type == "inc") return { count: state.count + 1 };
+    return state;
+  },
+  { count: 0 },
+);
+const countActor = createActor(countLogic);
 export default function App() {
+  const coutRef = useActorRef(countLogic);
+  const count = useSelector(coutRef, (state) => state.context.count);
   const [state, send] = useMachine(machine);
   const handleOpen = () => {
     send({ type: "open" });
@@ -70,6 +83,8 @@ export default function App() {
       ) : (
         <button onClick={handleOpen}>open feedback</button>
       )}
+      <h4>{count}</h4>
+      <button onClick={() => coutRef.send({ type: "inc" })}>count</button>
     </div>
   );
 }
